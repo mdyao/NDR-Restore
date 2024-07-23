@@ -1,0 +1,44 @@
+#### general settings
+
+name: test
+model: NDR
+gpu_ids: [0]
+
+#### datasets
+
+datasets:
+  test:
+    name: test
+    mode: NDR_test
+
+    # dehaze 
+
+    dehaze_gt: './example_dataset/train/haze/gt'
+    dehaze_lq: './example_dataset/train/haze/hazy' 
+
+    derain_gt: './example_dataset/train/rain/gt'
+    derain_lq: './example_dataset/train/rain/rain'
+
+    denoise_gt: './example_dataset/train/noise/gt'
+
+
+
+#### path
+
+path:
+  root: ./
+  pretrain_model_G: ./pretrained/model_L.pth
+  strict_load: false
+  resume_state: ~
+
+
+
+# #### training settings: NO USE IN TEST AND VALIDATION
+# just to run the code with default params #
+
+train:
+  lr_G: !!float 1e-9
+  beta1: 0.9
+  beta2: 0.999
+
+  lr_scheme: MultiStepLR

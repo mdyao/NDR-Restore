@@ -1,0 +1,30 @@
+#### general settings
+
+name: demo
+model: NDR
+gpu_ids: [0]
+
+#### datasets
+
+datasets:
+  demo:
+    name: my_demo
+    mode: NDR_demo
+    dataset_lq: './example_dataset/train/haze/hazy' 
+
+#### path
+path:
+  root: ./demo_output
+  pretrain_model_G: ./pretrained/model_L.pth
+  strict_load: false
+  resume_state: ~
+
+
+
+# #### training settings: NO USE IN TEST AND VALIDATION
+# just to run the code with default params #
+train:
+  lr_G: !!float 1e-9
+  beta1: 0.9
+  beta2: 0.999
+  lr_scheme: MultiStepLR

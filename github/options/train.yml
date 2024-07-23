@@ -1,0 +1,88 @@
+#### general settings
+name: train
+model: NDR
+scale: 2
+gpu_ids: [0]
+
+#### datasets
+
+datasets:
+  train:
+    name: Mix
+    mode: NDR_train
+
+    dehaze_gt: './example_dataset/train/haze/gt'
+    dehaze_lq: './example_dataset/train/haze/hazy' 
+
+    derain_gt: './example_dataset/train/rain/gt'
+    derain_lq: './example_dataset/train/rain/rainy'
+
+    denoise_gt: './example_dataset/train/noise/gt'
+
+    dehaze_ratio: 1
+    derain_ratio: 120
+    denoise_ratio: 3
+
+    noise_levels: [15,25,50]
+
+    n_workers: 6  
+    batch_size: 4
+    GT_size: 128
+
+  val:
+    name: Mix_val
+    mode: NDR_val
+    dataroot_gt: './example_dataset/train/rain/gt'
+    dataroot_lq: './example_dataset/train/rain/rainy' # path to training Noisy images
+
+#### network structures
+network_G:
+  which_model_G:
+      subnet_type: Resnet
+  in_nc: 3
+  out_nc: 3
+  block_num: [8, 8]
+  scale: 2
+  init: xavier
+
+
+#### path
+
+path:
+  root: ./
+  pretrain_model_G: 
+  strict_load: false
+  resume_state: ~
+
+
+#### training settings: learning rate scheme, loss
+
+train:
+  lr_G: !!float 1e-4
+  beta1: 0.9
+  beta2: 0.999
+  niter: 6000000
+  warmup_iter: -1  # no warm up
+
+  lr_scheme: MultiStepLR
+  lr_steps: [200000, 400000, 600000, 800000]
+  lr_gamma: 0.5
+
+  pixel_criterion: l1
+
+  manual_seed: 9
+
+  val_freq: !!float 1
+
+  lambda_restore: 1
+  lambda_degrad: 1
+
+  weight_decay_G: !!float 1e-8
+  gradient_clipping: 10
+
+
+#### logger
+
+logger:
+  print_freq: 2
+  save_checkpoint_freq: !!float 10000
