@@ -276,7 +276,6 @@ class Low_rank_transform(nn.Module):
         super(Low_rank_transform, self).__init__()
         c=4
 
-        # 这里的16*c实际是输入的channel，可以随意变化
         # self.trans = nn.Conv2d(dim, out_n_feat, kernel_size=1, bias=True)
         # For Channel dimennsion
         self.conv_C = torch.nn.Sequential(
@@ -329,17 +328,8 @@ class Degradation_inject(nn.Module):
         self.conv1 = nn.Conv2d(dim, dim, kernel_size=1, bias=True)
         self.f = nn.Conv2d(dim, out_n_feat, kernel_size=1, bias=True)
         self.g = nn.Conv2d(dim, out_n_feat, kernel_size=1, bias=True)
-        self.fg_dwconv = nn.Conv2d(
-            out_n_feat * 2,
-            out_n_feat * 2,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            groups=2,
-            bias=True,
-        )
+
         self.low_rank_transform1 = Low_rank_transform()
-        self.low_rank_transform2 = Low_rank_transform()
         self.low_rank_transform3 = Low_rank_transform(out_n_feat)
 
     def forward(self, x, dr):
@@ -408,7 +398,6 @@ class DegradationNet(nn.Module):
 
         self.extractor = nn.Conv2d(in_channels, dim, kernel_size=3, padding=1)
 
-        # 编码器部分
         self.block1 = DoubleConv(dim, dim)
         self.pool1 = Downsample(dim)
 
@@ -418,15 +407,12 @@ class DegradationNet(nn.Module):
         self.block3 = DoubleConv(dim* 2 ** 2, dim* 2 ** 2)
         self.pool3 = Downsample(int(dim * 2 ** 2))  ## From Level 3 to Level 4
 
-        # 中间部分
         self.bottom = DoubleConv(dim * 2**3,dim * 2**3)
 
-        # 残差连接部分
         self.inject_degradation1 = Degradation_inject(64, dim * 1)
         self.inject_degradation2 = Degradation_inject(64, dim * 2)
         self.inject_degradation3 = Degradation_inject(64, dim * 4)
 
-        # 解码器部分
         self.up3 = Upsample(int(dim * 2 ** 3))  ## From Level 4 to Level 3
         self.block_up3 = nn.Sequential(
             nn.Conv2d(int(dim * 2 ** 3), int(dim * 2 ** 2), kernel_size=1, bias=bias),
@@ -461,7 +447,7 @@ class DegradationNet(nn.Module):
         _, _, h, w = x.size()
 
         x = self.extractor(x)  # b, 64, h, w
-        # 编码器部分
+
         x1_1 = self.block1(x)  # b, 64, h, w
         x1_2 = self.pool1(x1_1)  # b, 64, 128, 128
 
@@ -471,14 +457,12 @@ class DegradationNet(nn.Module):
         x3_1 = self.block3(x2_2)
         x3_2 = self.pool3(x3_1)  # b, 64, 32, 32
 
-        # 残差连接部分
         x_res1 = self.inject_degradation1(x1_1, x_rep1)
         x_res2 = self.inject_degradation2(x2_1, x_rep2)
         x_res3 = self.inject_degradation3(x3_1, x_rep3)
 
         x_bottom = self.bottom(x3_2)
 
-        # 解码器部分
         x_up3 = self.up3(x_bottom)  # b, 64, 64, 64
         x_up3 = torch.cat([x_res3, x_up3], dim=1)  # b, 128, 32, 32
         x_de3 = self.block_up3(x_up3)
