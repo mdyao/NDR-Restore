@@ -269,7 +269,7 @@ class Degradation_recognition(nn.Module):
         # dr = self.ffn(self.norm2(dr))
         dr = self.ffn(dr)
 
-        return dr
+        return dr 
 
 class Low_rank_transform(nn.Module):
     def __init__(self, inchn=64):
@@ -320,7 +320,7 @@ class Low_rank_transform(nn.Module):
 
         x = x * cube0
 
-        return res+x
+        return  x
 
 class Degradation_inject(nn.Module):
     def __init__(self, dim, out_n_feat):
@@ -342,7 +342,8 @@ class Degradation_inject(nn.Module):
         g = self.g(self.low_rank_transform1(dr))
 
         x = f * x + g
-        return x + res
+
+        return x 
 
 
 class Degradation_representation_learning(nn.Module):
@@ -358,16 +359,14 @@ class Degradation_representation_learning(nn.Module):
 
     def forward(self, x, dr):
         feat = x
-        # 映射feature
         x = self.mapping(x)
 
-        # 表征attention
-        degradation_info = self.degradation_recog(x, dr)
+        degradation_info = self.degradation_recog(x, dr) 
 
         # inject degradation info
-        out = self.inject_degradation(feat, degradation_info)
-        return out + feat, degradation_info
-
+        out = self.inject_degradation(feat, degradation_info) 
+        return out, degradation_info 
+# 
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -547,7 +546,6 @@ class RestorationNet(nn.Module):
 
         self.pool3 = Downsample(int(dim * 2 ** 2))  ## From Level 3 to Level 4
 
-        # 中间部分
         self.bottom = nn.Sequential(
             *[
                 TransformerBlock(
@@ -667,7 +665,7 @@ class RestorationNet(nn.Module):
 
         x_out = self.refinement(x_de1)
 
-        x_out = self.reconstruction(x_out) + res
+        x_out = self.reconstruction(x_out)
 
         return x_out, x_rep1, x_rep2, x_rep3
 
@@ -687,7 +685,7 @@ class NDRN(nn.Module):
             self.x_rep2,
             self.x_rep3,
         ) = self.restoration_net(LQ_img)
-        return HQ_img#, self.degradation_representations
+        return HQ_img
 
     def degradation_process(self, HQ_img):
         LQ_img = self.degradation_net(

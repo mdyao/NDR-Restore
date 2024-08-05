@@ -37,6 +37,13 @@ class NDR_Model(BaseModel):
         # print network
         # self.print_network()
         self.load()
+        print(self.netG.module.degradation_representations[0,:,0])
+
+
+        # print(self.netG.module.degradation_representations[0,:,0])
+
+        # self.netG.module.restoration_net.extractor = nn.Conv2d(3, 48, kernel_size=3, padding=1)
+        # self.netG.module.restoration_net.extractor = self.netG.module.restoration_net.extractor.cuda()
 
         if self.is_train:
             self.netG.train()
