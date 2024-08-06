@@ -22,7 +22,23 @@ University of Science and Technology of China
 
 
 ## Training and testing
-Building....
+
+Modify the configurations in `*.yml`.
+
+### Run the demo.
+Download the [pretrained-model](https://huggingface.co/Mingde/pre-trained-models/resolve/main/model_L.pth?download=true)
+
+`python demo.py -opt options/demo.yml`
+
+### Train
+
+`python train.py -opt options/train.yml`
+
+
+### Test
+
+`python test.py -opt options/test.yml`
+
 
 ## :heart: Citing Us
 If you find this repository or our work useful, please consider giving a star :star: and citation :t-rex: , which would be greatly appreciated:
