@@ -3,7 +3,7 @@
 
 <div align="center">
 
-# [ :fire:] Neural Degradation Representation Learning for All-In-One Image Restoration
+# [ TIP24:fire:] Neural Degradation Representation Learning for All-In-One Image Restoration
 [Mingde Yao](https://mdyao.github.io/), [Ruikang Xu](https://scholar.google.com/citations?user=PulrrscAAAAJ&hl=en), [Yuanshen Guan](https://scholar.google.com/citations?user=Qhea-zsAAAAJ&hl=en), [Jie Huang](https://huangkevinj.github.io/), [Zhiwei Xiong](http://staff.ustc.edu.cn/~zwxiong/)
 
 University of Science and Technology of China
